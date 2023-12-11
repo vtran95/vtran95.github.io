@@ -6,6 +6,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      backgroundImage: {
+        'hero': "url('/images/hero.jpg')",
+      },
       keyframes: {
         gradient: {
           '0%, 100%': {

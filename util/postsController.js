@@ -6,10 +6,10 @@ import html from 'remark-html';
 
 const postsDirectory = path.join(process.cwd(), 'posts');
 
-export function getSortedPostsData() {
+export async function getSortedPostsData() {
   // Get file names under /posts
   const fileNames = fs.readdirSync(postsDirectory);
-  const allPostsData = fileNames.map((fileName) => {
+  const allPostsData = await Promise.all(fileNames.map(async (fileName) => {
     // Remove ".md" from file name to get id
     const id = fileName.replace(/\.md$/, '');
 
@@ -20,14 +20,22 @@ export function getSortedPostsData() {
     // Use gray-matter to parse the post metadata section
     const matterResult = matter(fileContents);
 
+    const processedContent = await remark()
+      .use(html)
+      .process(matterResult.content);
+    const contentHtml = processedContent.toString();
+
+    console.log(contentHtml)
+
     // Combine the data with the id
     return {
       id,
-      ...matterResult.data,
+      contentHtml,
+      ...matterResult.data
     };
-  });
+  }));
   // Sort posts by date
-  return allPostsData.sort(({ date: a }, { date: b }) => {
+  return allPostsData.sort(({ enddate: a }, { enddate: b }) => {
     if (a < b) {
       return 1;
     } else if (a > b) {

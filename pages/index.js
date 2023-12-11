@@ -2,10 +2,21 @@ import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import profilePic from '../public/images/profile-picture.jpg'
-import { useEffect } from 'react'
+import ListAway from '../public/images/ListAway.PNG'
+import { getSortedPostsData } from '../util/postsController'
+// import { useEffect } from 'react'
 // import canvasDots from '../util/headerCanvas';
 
-export default function Home() {
+export async function getStaticProps() {
+  const allPostsData = await getSortedPostsData();
+  return {
+    props: {
+      allPostsData
+    }
+  };
+}
+
+export default function Home({ allPostsData }) {
 
   // TODO: canvasDots are glitching, possibly need to integrate Canvas component
 
@@ -22,14 +33,14 @@ export default function Home() {
       </Head>
 
       {/* <header className="animate-gradientShift bg-gradient-to-br from-cyan-500 via-indigo-500 to-purple-500 flex justify-center items-center text-center py-8 gap-10 w-screen h-screen"> */}
-      <header className="flex flex-col justify-center items-center text-center w-screen h-screen gap-10">
+      <header className="flex flex-col justify-center items-center text-center w-screen h-screen gap-10 bg-hero bg-no-repeat bg-cover bg-center">
         {/* <canvas></canvas> */}
-        <div className="flex justify-center items-center py-8 gap-10">
+        <div className="flex flex-col justify-center items-center py-8 gap-10">
           <div className="max-w-sm">
             <Image className="rounded-full" src={profilePic} alt="Vincent Tran's Profile Picture" />
           </div>
           <div className="flex flex-col">
-            <h1 className="text-5xl font-bold">
+            <h1 className="text-5xl font-bold pb-3">
               Vincent Tran
             </h1>
             <h3 className='text-3xl'>
@@ -37,7 +48,9 @@ export default function Home() {
             </h3>
           </div>
         </div>
-        <div className='flex flex-wrap justify-center w-72 space-x-2 space-y-2'>
+
+        {/* ICONS */}
+        {/* <div className='flex flex-wrap justify-center w-72 space-x-2 space-y-2'>
           <img className='w-10' src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" />
           <img className='w-10' src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" />
           <img className='w-10' src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" />
@@ -58,61 +71,47 @@ export default function Home() {
           <img className='w-10' src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/androidstudio/androidstudio-original.svg" />
           <img className='w-10' src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg" />
           <img className='w-10' src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg" />
-        </div>
+        </div> */}
       </header>
 
-      <main className={styles.main}>
-        <h1 className="text-5xl font-bold hover:underline" >
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+      <main className='px-8'>
+        <div className='py-8'>
+          <div>
+            <h1 className="text-5xl font-bold underline">Work Experience</h1>
+          </div>
+          <div>
+            {allPostsData.map(({ id, employer, title, startdate, enddate, contentHtml }) => (
+              <div key={id} className='px-5 py-8'>
+                <h2 className="text-4xl font-bold">{employer}</h2>
+                <h4 className="text-2xl">{title}</h4>
+                <div dangerouslySetInnerHTML={{ __html: contentHtml }}></div>
+              </div>
+            ))}
+          </div>
         </div>
+
+        <div className='py-8'>
+          <div>
+            <h1 className="text-5xl font-bold underline">Projects</h1>
+          </div>
+          <div className='px-5 py-8'>
+            <a href='https://list-615f1.firebaseapp.com/' target='_blank' className=' hover:text-blue-600'><h2 className="text-4xl font-bold">List Away</h2></a>
+            <p className='py-5'>A simple yet polished to-do list app completed during my studies at BCIT.</p>
+            <Image src={ListAway}/>
+          </div>
+        </div>
+        
       </main>
 
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
+      <footer className="p-8">
+        <h4 className="text-4xl font-bold justify-start" >
+          Contact
+        </h4>
+        <ul className="px-5 py-3">
+          <li>(604) - 307 - 7404</li>
+          <li>vintran1995@gmail.com</li>
+          <li className='hover:text-blue-600'><a href='https://github.com/vtran95' target='_blank'>github.com/vtran95</a></li>
+        </ul>
       </footer>
     </div>
   )
